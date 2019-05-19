@@ -40,7 +40,6 @@ CIriFitnessFunction::~CIriFitnessFunction(){
 }
 /******************************************************************************/
 /******************************************************************************/
-int state = 0;
 
 double CIriFitnessFunction::GetFitness()
 {    
@@ -50,7 +49,7 @@ double CIriFitnessFunction::GetFitness()
 	int coll = (CCollisionManager::GetInstance()->GetTotalNumberOfCollisions());
 
 	/* Get the fitness divided by the number of steps */
-	double fit = ( m_fComputedFitness / (double) m_unNumberOfSteps ) * (1 - ((double) (fmin(coll,100)/100.0)));
+	double fit = ( m_fComputedFitness / (double) m_unNumberOfSteps ) * (1 - ((double) (fmin(coll,50)/50.0)));
 
 	/* If fitness less than 0, put it to 0 */
 	if ( fit < 0.0 ) fit = 0.0;
@@ -78,7 +77,7 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 	rightSpeed = 0.5 + ( rightSpeed / ( 2.0 *  m_pcEpuck->GetMaxWheelSpeed()) );
 
 	/* Eval maximum speed partial fitness */
-	double maxSpeedEval = (fabs(leftSpeed - 0.5) + fabs(rightSpeed - 0.5));
+	double maxSpeedEval = fmax(fabs(leftSpeed),fabs(rightSpeed));
 	
 	/* Eval SENSORS */
 
@@ -86,13 +85,13 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 	double maxProxSensorEval 		= 0.0;
 	/* Where the Max LIGHT sensor will be stored*/
 	double maxLightSensorEval 		= 0.0;
-	/* whre the BATTERY will be stored */
-	double* battery;
 	
+	double proxS0	=	0.0;
 	double proxS1	=	0.0;
 	double proxS2	=	0.0;
 	double proxS5	=	0.0;
 	double proxS6	=	0.0;
+	double proxS7	=	0.0;
 	double lightS0	=	0.0;
 	double lightS7	=	0.0;
 
@@ -132,6 +131,10 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 						proxS5 = pfThisSensorInputs[j];
 					else if (j==6)
 						proxS6 = pfThisSensorInputs[j];
+					else if (j==0)
+						proxS0 = pfThisSensorInputs[j];
+					else if (j==7)
+						proxS7 = pfThisSensorInputs[j];
 				}
 				break;
 
@@ -145,6 +148,7 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 				/* For every input */
 				for (int j = 0; j < unThisSensorsNumberOfInputs; j++)
 				{
+
 					/* If reading bigger than maximum */
 					if ( pfThisSensorInputs[j] > maxLightSensorEval )
 					{	
@@ -158,11 +162,6 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 						lightS7 = pfThisSensorInputs[j];
 				}
 				break;
-
-			/* If sensor is BATTERY */
-			case SENSOR_BATTERY:
-         		battery = (*i)->GetComputedSensorReadings();
-				break;
 		}
 	}
 	
@@ -175,49 +174,25 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 	}
 
 	//Distancia a la pared que preferimos
-	double proxUmb = 0.7;
+	double proxFit1, proxFit2, lightFit = 0.0;
+	double proxUmb = 0.75;
 	//Cuanto más se parezca a proxUmb la media de ambos sensores, mayor fitness
-	double proxFit = 1 - abs(( 0.5*proxS5 + 0.5*proxS6 ) - proxUmb);
-
-	//Distancia giro sobre luz
-	double lightUmb = 0.85;
-	//Ver luz por los sensores delanteros aporta puntuacion
-	double lightFit = fmin(1.0,( (1/2)*lightS0 + (1/2)*lightS7 )/lightUmb);
-
+	proxFit1 = 1 - abs(( 0.5*proxS5 + 0.5*proxS6 ) - proxUmb);
+	proxFit2 = 1 - abs(( 0.5*proxS1 + 0.5*proxS2 ) - proxUmb);
+	lightFit = (lightS0 + lightS7)/2;
 	//Parametros fitness
   	double fitness = 0.0;
   	double coef1 = 0.2;
   	double coef2 = 0.8;
-  	double coef3 = 0.0;
 
-  	//Escogemos manera de evaluarlo segun la bateria que tenga
-  	double batteryUmb = 0.3;
-  	if(battery[0]<batteryUmb){
-  		state = 1;
-  		coef1 = 0.2;
-  		coef2 = 0.8;
-  		coef3 = 0.0;
-  	}else if(battery[0]>(1-batteryUmb)){
-  		state = 0;
-  		coef1 = 0.2;
-  		coef2 = 0.8;
-  		coef3 = 0.0;
+  	if(maxLightSensorEval!=0.0){
+  		fitness = coef1*maxSpeedEval;
+		fitness += coef2*proxFit1*goForwardEval;
+  	}else{
+  		fitness = coef1*maxSpeedEval;
+		fitness += coef2*proxFit2*goForwardEval;
   	}
-
-  	//Evaluamos comportamiento cada step
-  	switch(state){
-  		case 0:
-  			fitness = coef1*maxSpeedEval;
-			fitness += coef2*proxFit;
-  			break;
-
-  		case 1:
-  			fitness = coef1*maxSpeedEval;
-  			fitness += coef2*lightFit;
-  			break;
-  	}
-  	//Nos aseguramos de que va hacia delante
-  	fitness *= goForwardEval;
+  	//fitness *= goForwardEval;
 	
 	/* TO HERE YOU NEED TO CREATE YOUR FITNESS */	
 
