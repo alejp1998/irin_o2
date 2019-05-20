@@ -38,6 +38,7 @@ CIriFitnessFunction::CIriFitnessFunction(const char* pch_name,
 
 CIriFitnessFunction::~CIriFitnessFunction(){
 }
+
 /******************************************************************************/
 /******************************************************************************/
 
@@ -78,6 +79,8 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 
 	/* Eval maximum speed partial fitness */
 	double maxSpeedEval = fmax(fabs(leftSpeed),fabs(rightSpeed));
+	/* Eval same directio partial fitness */
+	double sameDirectionEval = 1 - sqrt(fabs(leftSpeed - rightSpeed));
 	
 	/* Eval SENSORS */
 
@@ -85,6 +88,8 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 	double maxProxSensorEval 		= 0.0;
 	/* Where the Max LIGHT sensor will be stored*/
 	double maxLightSensorEval 		= 0.0;
+	/* Where the BATTERY will be stored */
+	double* battery;
 	
 	double proxS0	=	0.0;
 	double proxS1	=	0.0;
@@ -162,37 +167,63 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 						lightS7 = pfThisSensorInputs[j];
 				}
 				break;
+
+			/* If sensor is BATTERY */
+			case SENSOR_BATTERY:
+         		battery = (*i)->GetComputedSensorReadings();
+				break;	
 		}
 	}
 	
 	/* FROM HERE YOU NEED TO CREATE YOUR FITNESS */	
 
-	//Nos aseguramos de que va hacia delante
-	double goForwardEval = 0.0;
-	if(leftSpeed>0.5 && rightSpeed>0.5){
-		goForwardEval = 1.0;
-	}
-
+	/*INTENTO DE SEGUIMIENTO PAREDES Y DESPUES BATERIA
 	//Distancia a la pared que preferimos
-	double proxFit1, proxFit2, lightFit = 0.0;
+	double proxFit, lightFit = 0.0;
 	double proxUmb = 0.75;
+
 	//Cuanto más se parezca a proxUmb la media de ambos sensores, mayor fitness
-	proxFit1 = 1 - abs(( 0.5*proxS5 + 0.5*proxS6 ) - proxUmb);
-	proxFit2 = 1 - abs(( 0.5*proxS1 + 0.5*proxS2 ) - proxUmb);
+	proxFit = 1 - abs(( 0.5*proxS1 + 0.5*proxS2 ) - proxUmb);
 	lightFit = (lightS0 + lightS7)/2;
+
 	//Parametros fitness
   	double fitness = 0.0;
-  	double coef1 = 0.2;
-  	double coef2 = 0.8;
+  	double coef1 = 0.25;
+  	double coef2 = 0.75;
+  	double coef3 = 0.0;
 
-  	if(maxLightSensorEval!=0.0){
-  		fitness = coef1*maxSpeedEval;
-		fitness += coef2*proxFit1*goForwardEval;
-  	}else{
-  		fitness = coef1*maxSpeedEval;
-		fitness += coef2*proxFit2*goForwardEval;
+  	//Escogemos manera de evaluarlo segun la bateria que tenga
+  	double batteryUmb = 0.3;
+  	if(battery[0]<batteryUmb){
+  		state = 1;
+  		coef1 = 0.2;
+  		coef2 = 0.3;
+  		coef3 = 0.5;
+  	}else if(battery[0]>(1-batteryUmb)){
+  		state = 0;
+  		coef1 = 0.25;
+  		coef2 = 0.75;
+  		coef3 = 0.0;
   	}
-  	//fitness *= goForwardEval;
+
+  	//Evaluamos comportamiento cada step
+  	switch(state){
+  		//Rodear paredes mientras pierde bateria
+  		case 0:
+  			fitness = coef1*maxSpeedEval*sameDirectionEval;
+			fitness += coef2*proxFit;
+  			break;
+
+  		//Ir hacia la luz para recargar bateria	
+  		case 1:
+  			fitness = coef1*maxSpeedEval*sameDirectionEval;
+  			fitness += coef2*lightFit;
+  			fitness += coef3*fmin(1.0,battery[0]/batteryUmb);
+  			break;
+  	}
+  	FINAL DE INTENTO SEGUIMIENTO PAREDES*/
+
+  	/*INTENTO DE ORBITA A DISTANCIAS DISTANCIAS Y SENTIDOS SOBRE LUCES
 	
 	/* TO HERE YOU NEED TO CREATE YOUR FITNESS */	
 

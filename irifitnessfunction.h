@@ -30,6 +30,7 @@ public:
 protected:
 		unsigned int m_unNumberOfSteps;
 		double 			m_fComputedFitness;
+		int state = 0;
 		CEpuck* m_pcEpuck;
 
 };
