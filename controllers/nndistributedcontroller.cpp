@@ -5,32 +5,32 @@
 /******************************************************************************/
 
 CNNDistributedController::CNNDistributedController(const char* pch_name, CEpuck* pc_epuck, 
-																									 unsigned int un_number_of_layers, 
-																									 unsigned int* un_layers_outputs,	
-																									 unsigned int* un_layer_sensor_type,
-																									 unsigned int* un_activation_function,
-																									 unsigned int** un_adjacency_matrix,
-																									 unsigned int* un_learning_layer_flag,
-																									 unsigned int* un_evo_devo_layer_flag,
-																									 unsigned int* un_learning_diagonal_flag,
-																									 double f_lower_bounds, 
-																									 double f_upper_bounds,
-																									 bool b_evolutionary_flag, 
-																									 bool b_learning_flag, 
-																									 double f_eta, double f_epsilon, 
-																									 int n_write_to_file, 
-																									 unsigned int un_proximity_mumber, 
-																									 unsigned int* un_proximity_value, 
-																									 unsigned int un_contact_number, 
-																									 unsigned int* un_contact_value, 
-																									 unsigned int un_light_number, 
-																									 unsigned int* un_light_value, 
-																									 unsigned int un_ground_number, 
-																									 unsigned int* un_ground_value,
-																									 unsigned int un_blue_light_number, 
-																									 unsigned int* un_blue_light_value,
-																									 unsigned int un_red_light_number, 
-																									 unsigned int* un_red_light_value) :
+		 unsigned int un_number_of_layers, 
+		 unsigned int* un_layers_outputs,	
+		 unsigned int* un_layer_sensor_type,
+		 unsigned int* un_activation_function,
+		 unsigned int** un_adjacency_matrix,
+		 unsigned int* un_learning_layer_flag,
+		 unsigned int* un_evo_devo_layer_flag,
+		 unsigned int* un_learning_diagonal_flag,
+		 double f_lower_bounds, 
+		 double f_upper_bounds,
+		 bool b_evolutionary_flag, 
+		 bool b_learning_flag, 
+		 double f_eta, double f_epsilon, 
+		 int n_write_to_file, 
+		 unsigned int un_proximity_mumber, 
+		 unsigned int* un_proximity_value, 
+		 unsigned int un_contact_number, 
+		 unsigned int* un_contact_value, 
+		 unsigned int un_light_number, 
+		 unsigned int* un_light_value, 
+		 unsigned int un_ground_number, 
+		 unsigned int* un_ground_value,
+		 unsigned int un_blue_light_number, 
+		 unsigned int* un_blue_light_value,
+		 unsigned int un_red_light_number, 
+		 unsigned int* un_red_light_value) :
     CController(pch_name, pc_epuck),
     m_pfInputs(NULL)
 {
@@ -300,6 +300,8 @@ void CNNDistributedController::SimulationStep(unsigned n_step_number, double f_t
 	double proxS1 = 0.0;
 	double proxS2 = 0.0;
 	double maxLight = 0.0;
+	double maxBlueLight = 0.0;
+	double maxRedLight = 0.0;
 	double battery = 0.0;
 
 	/* For every Layer Do */
@@ -354,7 +356,7 @@ void CNNDistributedController::SimulationStep(unsigned n_step_number, double f_t
 						}
 						break;
 					
-          case SENSOR_REAL_LIGHT:
+          			case SENSOR_REAL_LIGHT:
 						pfSensorInputs = new double[m_unLightSensorsUsedNumber];
 						for ( int i = 0 ; i < (*j)->GetNumberOfInputs() ; i++)
 						{
@@ -364,13 +366,13 @@ void CNNDistributedController::SimulationStep(unsigned n_step_number, double f_t
 								realIndex++;
 							}
 
-							if(pfTotalSensorInputs[i]>maxLight){
-								maxLight = pfTotalSensorInputs[i];
+							if(pfSensorInputs[i]>maxLight){
+								maxLight = pfSensorInputs[i];
 							}
 						}
 						break;
 
-          case SENSOR_REAL_BLUE_LIGHT:
+          			case SENSOR_REAL_BLUE_LIGHT:
 						pfSensorInputs = new double[m_unBlueLightSensorsUsedNumber];
 						for ( int i = 0 ; i < (*j)->GetNumberOfInputs() ; i++)
 						{
@@ -378,6 +380,9 @@ void CNNDistributedController::SimulationStep(unsigned n_step_number, double f_t
 							{
 								pfSensorInputs[realIndex] = pfTotalSensorInputs[i]; 
 								realIndex++;
+							}
+							if(pfSensorInputs[i]>maxBlueLight){
+								maxBlueLight = pfSensorInputs[i];
 							}
 						}
 						break;
@@ -390,6 +395,9 @@ void CNNDistributedController::SimulationStep(unsigned n_step_number, double f_t
 							{
 								pfSensorInputs[realIndex] = pfTotalSensorInputs[i]; 
 								realIndex++;
+							}
+							if(pfSensorInputs[i]>maxRedLight){
+								maxRedLight = pfSensorInputs[i];
 							}
 						}
 						break;
@@ -649,16 +657,15 @@ void CNNDistributedController::SimulationStep(unsigned n_step_number, double f_t
 	}
 	/* END DEBUG COMPARISON AGUTI */
 
-	/* Restar bateria si sigue una pared */
-	if( ((proxS1+proxS2)/2) > 0.05 && battery != 0.0){
-		/*Y restamos energia poco a poco*/
-		m_seBattery->ProxBatteryDamage(m_pcEpuck);
-		m_pcEpuck->SetAllColoredLeds(LED_COLOR_RED);
+	/* Color de luz encendida */
+	if(maxLight > 0.0){
+		m_pcEpuck->SetAllColoredLeds(LED_COLOR_YELLOW);
 	}
-
-	/*Ponernos azules cerca de la luz */
-	if(maxLight>0.7){
+	if(maxBlueLight > 0.0){
 		m_pcEpuck->SetAllColoredLeds(LED_COLOR_BLUE);
+	}
+	if(maxRedLight > 0.0){
+		m_pcEpuck->SetAllColoredLeds(LED_COLOR_RED);
 	}
 }
 
