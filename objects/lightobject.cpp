@@ -129,7 +129,7 @@ void CLightObject::Reset ( void )
 int CLightObject::GetTiming ( unsigned int n_step_number )
 {
 	count++;
-	int jump = 300;
+	int jump = 400;
 	/* Create sequence */
 	if ( !(count % (3*jump)) ){
 		count = 0;

@@ -3,9 +3,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 NUMBER OF ROBOTS					= 1	
-ROBOT 1: X POSITION (meters)		= 0.0
-ROBOT 1: Y POSITION (meters)		= 0.0
-ROBOT 1: ORIENTATION (radians) 		= 0.0
+ROBOT 1: X POSITION (meters)		= 1.0
+ROBOT 1: Y POSITION (meters)		= 1.0
+ROBOT 1: ORIENTATION (radians) 		= 3.14
 WRITE TO FILE (0 No, 1 YES )		= 1
 RUN TIME							= 1000
 
@@ -13,21 +13,23 @@ RUN TIME							= 1000
 %%%%%%%%%%%%% ENVIRONMENT %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-NUMBER OF LIGHT OBJECTS  			= 2
+NUMBER OF LIGHT OBJECTS  			= 3
 LIGHT 1: X POSITION					= 0.3
 LIGHT 1: Y POSITION					= -0.9
 LIGHT 2: X POSITION					= -0.3
 LIGHT 2: Y POSITION					= -0.9
+LIGHT 3: X POSITION					= 0.0
+LIGHT 3: Y POSITION					= -0.5
 
 
 NUMBER OF BLUE LIGHT OBJECTS  		= 1
-LIGHT 1: X POSITION					= 0.75
-LIGHT 1: Y POSITION					= 0.75
+LIGHT 1: X POSITION					= 0.5
+LIGHT 1: Y POSITION					= 0.5
 
 
 NUMBER OF RED LIGHT OBJECTS  		= 1
-LIGHT 1: X POSITION					= -0.75
-LIGHT 1: Y POSITION					= 0.75
+LIGHT 1: X POSITION					= -0.5
+LIGHT 1: Y POSITION					= 0.5
 
 
 NUMBER OF GROUND AREA				= 0
@@ -36,9 +38,9 @@ NUMBER OF GROUND AREA				= 0
 %%%%%%%%%%%%%%% SENSORS %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-LIGHT SENSOR RANGE (meters)					= 3.5
-BLUE LIGHT SENSOR RANGE (meters)			= 3.5
-RED LIGHT SENSOR RANGE (meters)				= 3.5
+LIGHT SENSOR RANGE (meters)					= 3
+BLUE LIGHT SENSOR RANGE (meters)			= 3
+RED LIGHT SENSOR RANGE (meters)				= 3
 BATTERY SENSOR RANGE (meters)				= 0.3
 BATTERY CHARGE COEF 						= 0.000
 BATTERY DISCHARGE COEF						= 0.000
@@ -67,7 +69,7 @@ GROUND SENSORS USED     (3 sensors: 0 OFF, 1 ON)  = 0 0 0
 CHROMOSOME LENGTH 								= 58
 POPULATION SIZE									= 100
 NUMBER OF GENERATIONS							= 3000	
-EVALUATION TIME									= 400
+EVALUATION TIME									= 300
 DO CROSSOVER ( 0 No, 1 Yes )					= 1
 NUMBER OF CROSSOVERS ( Always 1 ) 				= 1
 CROSSOVER DISTANCE 	 ( Always 1 ) 				= 1
@@ -78,7 +80,6 @@ SAMPLES PER CHROMOSOME							= 1
 RANDOM POSITION ORIENTATION (0 NO, 1 YES) 		= 1
 RANDOM INIT AREA X								= 0.2
 RANDOM INIT AREA Y								= 0.2
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%% NEURAL %%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,4 +125,4 @@ RELATION LAYER 0 	= 0 0 0 0 1
 RELATION LAYER 1 	= 0 0 0 0 1 
 RELATION LAYER 2 	= 0 0 0 0 1 
 RELATION LAYER 3 	= 0 0 0 0 1 
-RELATION LAYER 4 	= 0 0 0 0 0
+RELATION LAYER 4 	= 0 0 0 0 0 

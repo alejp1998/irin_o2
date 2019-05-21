@@ -85,9 +85,9 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 	/* Eval SENSORS */
 
 	/* Where the Max PROXIMITY sensor will be stored*/
-	double maxProxSensorEval 		= 0.0;
+	double maxProxSensorEval = 0.0;
 	/* Where the Max LIGHT sensor will be stored*/
-	double maxYellowEval		= 0.0;
+	double maxYellowEval	= 0.0;
 	double maxBlueEval		= 0.0;
 	double maxRedEval		= 0.0;
 
@@ -237,8 +237,8 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 
   	/*INTENTO DE ORBITA A DISTANCIAS DISTANCIAS Y SENTIDOS SOBRE LUCES*/
 	//Distancias de giro
-	double blueUmb = 0.65;
-	double redUmb  = 0.65;
+	double blueUmb = 0.5;
+	double redUmb  = 0.5;
 
 	//Parametros fitness
   	double fitness = 0.0;
@@ -247,18 +247,21 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 
   	//Acercarse a la luz amarilla
   	double yellowFit = (yellowS0 + yellowS7)/2;
-  	double blueFit = 1 - abs(( 0.5*blueS5 + 0.5*blueS6 ) - blueUmb);
-  	double redFit = 1 - abs(( 0.5*redS1 + 0.5*redS2 ) - redUmb);
+
+  	//Rodear luces azul y roja
+  	double blueFit = 1 - abs(( blueS5 + blueS6 )/2 - blueUmb);
+  	double redFit = 1 - abs(( redS1 + redS2 )/2 - redUmb);
+
 
   	//Calculo de fitness segun luz encendida
   	if(maxYellowEval>0.0){
   		fitness = coef1*maxSpeedEval*sameDirectionEval;
   		fitness += coef2*yellowFit;
   	}else if(maxBlueEval>0.0){
-  		fitness = coef1*maxSpeedEval*sameDirectionEval;
+  		fitness = coef1*maxSpeedEval;
   		fitness += coef2*blueFit;
   	}else if(maxRedEval>0.0){
-  		fitness = coef1*maxSpeedEval*sameDirectionEval;
+  		fitness = coef1*maxSpeedEval;
   		fitness += coef2*redFit;
   	}
 	/* TO HERE YOU NEED TO CREATE YOUR FITNESS */	
