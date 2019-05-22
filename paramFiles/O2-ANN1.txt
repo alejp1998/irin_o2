@@ -1,0 +1,128 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% EXTRA %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NUMBER OF ROBOTS					= 1	
+ROBOT 1: X POSITION (meters)		= 0.0
+ROBOT 1: Y POSITION (meters)		= 0.0
+ROBOT 1: ORIENTATION (radians) 		= 0.0
+WRITE TO FILE (0 No, 1 YES )		= 1
+RUN TIME							= 1000
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% ENVIRONMENT %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+NUMBER OF LIGHT OBJECTS  			= 3
+LIGHT 1: X POSITION					= 0.3
+LIGHT 1: Y POSITION					= -0.9
+LIGHT 2: X POSITION					= -0.3
+LIGHT 2: Y POSITION					= -0.9
+LIGHT 3: X POSITION					= 0.0
+LIGHT 3: Y POSITION					= -0.5
+
+
+NUMBER OF BLUE LIGHT OBJECTS  		= 1
+LIGHT 1: X POSITION					= 0.5
+LIGHT 1: Y POSITION					= 0.5
+
+
+NUMBER OF RED LIGHT OBJECTS  		= 1
+LIGHT 1: X POSITION					= -0.5
+LIGHT 1: Y POSITION					= 0.5
+
+
+NUMBER OF GROUND AREA				= 0
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% SENSORS %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+LIGHT SENSOR RANGE (meters)					= 3
+BLUE LIGHT SENSOR RANGE (meters)			= 3
+RED LIGHT SENSOR RANGE (meters)				= 3
+BATTERY SENSOR RANGE (meters)				= 0.3
+BATTERY CHARGE COEF 						= 0.000
+BATTERY DISCHARGE COEF						= 0.000
+BLUE BATTERY SENSOR RANGE (meters)			= 0.3
+BLUE BATTERY CHARGE COEF 					= 0.01
+BLUE BATTERY DISCHARGE COEF					= 0.01
+RED BATTERY SENSOR RANGE (meters)			= 0.35
+RED BATTERY CHARGE COEF 					= 0.01
+RED BATTERY DISCHARGE COEF					= 0.0001
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% MORPHOLOGY %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+PROXIMITY SENSORS USED  (8 sensors: 0 OFF, 1 ON)  = 1 1 0 0 0 0 1 1
+CONTACT SENSORS USED    (8 sensors: 0 OFF, 1 ON)  = 1 1 1 1 1 1 1 1
+LIGHT SENSORS USED      (8 sensors: 0 OFF, 1 ON)  = 1 1 1 1 1 1 1 1
+BLUE LIGHT SENSORS USED (8 sensors: 0 OFF, 1 ON)  = 1 1 1 1 1 1 1 1
+RED LIGHT SENSORS USED  (8 sensors: 0 OFF, 1 ON)  = 1 1 1 1 1 1 1 1
+GROUND SENSORS USED     (3 sensors: 0 OFF, 1 ON)  = 0 0 0
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% GENETIC %%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+CHROMOSOME LENGTH 								= 58
+POPULATION SIZE									= 100
+NUMBER OF GENERATIONS							= 3000	
+EVALUATION TIME									= 300
+DO CROSSOVER ( 0 No, 1 Yes )					= 1
+NUMBER OF CROSSOVERS ( Always 1 ) 				= 1
+CROSSOVER DISTANCE 	 ( Always 1 ) 				= 1
+MUTATION RATE									= 0.2
+NUMBER OF ELITES								= 6
+FITNESS FUNCTION								= 4
+SAMPLES PER CHROMOSOME							= 1
+RANDOM POSITION ORIENTATION (0 NO, 1 YES) 		= 1
+RANDOM INIT AREA X								= 0.2
+RANDOM INIT AREA Y								= 0.2
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% NEURAL %%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+WEIGTH UPPER BOUND	= 5.0
+WEIGTH LOWER BOUND	= -5.0
+
+
+NUMBER OF LAYERS	= 5
+
+
+SENSOR TO LAYER X ( NONE 0, CONTACT 1, PROX 2, LIGHT 3, BATTERY 4, GROUND_MEMORY 5, GROUND 6, BLUE LIGHT 7, RED LIGHT 8, BLUE BATTERY 9, RED_BATTERY 10)
+
+SENSOR TO LAYER 0 	= 2
+SENSOR TO LAYER 1  	= 3
+SENSOR TO LAYER 2	= 7
+SENSOR TO LAYER 3	= 8
+SENSOR TO LAYER 4	= 0
+
+
+ACTIVATION FUNCTION LAYER X ( 0 IDENTITY, 1 SIGMOID, 2 STEP, 3 LINEAR, 4 PROGRAM )
+
+ACTIVATION FUNCTION LAYER 0	= 0
+ACTIVATION FUNCTION LAYER 1	= 0
+ACTIVATION FUNCTION LAYER 2	= 0
+ACTIVATION FUNCTION LAYER 3	= 0
+ACTIVATION FUNCTION LAYER 4	= 1
+
+
+NUMBER OF OUTPUTS LAYER X
+
+NUMBER OF OUTPUTs LAYER 0 PROX 			= 4 
+NUMBER OF OUTPUTs LAYER 1 YELLOW		= 8 
+NUMBER OF OUTPUTs LAYER 2 BLUE			= 8 
+NUMBER OF OUTPUTs LAYER 3 RED 			= 8 
+NUMBER OF OUTPUTs LAYER 4 WHEELS		= 2
+
+
+RELATIONS BETWEEN LAYERS
+
+RELATION LAYER 0 	= 0 0 0 0 1 
+RELATION LAYER 1 	= 0 0 0 0 1 
+RELATION LAYER 2 	= 0 0 0 0 1 
+RELATION LAYER 3 	= 0 0 0 0 1 
+RELATION LAYER 4 	= 0 0 0 0 0 

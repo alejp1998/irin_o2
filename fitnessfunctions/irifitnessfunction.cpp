@@ -96,6 +96,8 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 	double yellowS7	=	0.0;
 	double redS1	=	0.0;
 	double redS2	=	0.0;
+	double redS3	=	0.0;
+	double blueS4	=	0.0;
 	double blueS5	=	0.0;
 	double blueS6	=	0.0;
 
@@ -153,7 +155,9 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 						maxBlueEval = pfThisSensorInputs[j];
 					}
 					//Store sensors 0 & 7 values
-					if (j==5)
+					if (j==4)
+						blueS4 = pfThisSensorInputs[j];
+					else if (j==5)
 						blueS5 = pfThisSensorInputs[j];
 					else if (j==6)
 						blueS6 = pfThisSensorInputs[j];
@@ -182,68 +186,55 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 						redS1 = pfThisSensorInputs[j];
 					else if (j==2)
 						redS2 = pfThisSensorInputs[j];
+					else if (j==3)
+						redS3 = pfThisSensorInputs[j];
 				}
 				break;
 		}
-	}
+	}	
+
+  	/*ORBITA SOBRE LUCES Y ACERCAMIENTO*/
+
+  	/*EXP 1*/
+  	/*Mismas distancias de orbita y se evalua por coeficientes */
+
+	// //Distancias de giro
+	// double blueUmb = 0.5;
+	// double redUmb  = 0.5;
+
+	// //Parametros fitness
+ //  	double fitness = 0.0;
+ //  	double coef1 = 0.25;
+ //  	double coef2 = 0.75;
+
+ //  	//Acercarse a la luz amarilla
+ //  	double yellowFit = (yellowS0 + yellowS7)/2;
+
+ //  	//Rodear luces azul y roja
+ //  	double blueFit = 1 - abs(( blueS5 + blueS6 )/2 - blueUmb);
+ //  	double redFit = 1 - abs(( redS1 + redS2 )/2 - redUmb);
+
+ //  	//Calculo de fitness segun luz encendida
+ //  	if(maxYellowEval>0.0){
+ //  		fitness = coef1*maxSpeedEval*sameDirectionEval;
+ //  		fitness += coef2*yellowFit;
+ //  	}else if(maxBlueEval>0.0){
+ //  		fitness = coef1*maxSpeedEval;
+ //  		fitness += coef2*blueFit;
+ //  	}else if(maxRedEval>0.0){
+ //  		fitness = coef1*maxSpeedEval;
+ //  		fitness += coef2*redFit;
+ //  	}
 	
-	/* FROM HERE YOU NEED TO CREATE YOUR FITNESS */	
+  	/*EXP 2*/
+  	/*Distintas distancias de orbita y evaluacion por multiplicacion de todo*/
 
-	/*INTENTO DE SEGUIMIENTO PAREDES Y DESPUES BATERIA
-	//Distancia a la pared que preferimos
-	double proxFit, lightFit = 0.0;
-	double proxUmb = 0.75;
-
-	//Cuanto más se parezca a proxUmb la media de ambos sensores, mayor fitness
-	proxFit = 1 - abs(( 0.5*proxS1 + 0.5*proxS2 ) - proxUmb);
-	lightFit = (lightS0 + lightS7)/2;
+  	//Distancias de giro
+	double blueUmb = 0.55;
+	double redUmb  = 0.45;
 
 	//Parametros fitness
   	double fitness = 0.0;
-  	double coef1 = 0.25;
-  	double coef2 = 0.75;
-  	double coef3 = 0.0;
-
-  	//Escogemos manera de evaluarlo segun la bateria que tenga
-  	double batteryUmb = 0.3;
-  	if(battery[0]<batteryUmb){
-  		state = 1;
-  		coef1 = 0.2;
-  		coef2 = 0.3;
-  		coef3 = 0.5;
-  	}else if(battery[0]>(1-batteryUmb)){
-  		state = 0;
-  		coef1 = 0.25;
-  		coef2 = 0.75;
-  		coef3 = 0.0;
-  	}
-
-  	//Evaluamos comportamiento cada step
-  	switch(state){
-  		//Rodear paredes mientras pierde bateria
-  		case 0:
-  			fitness = coef1*maxSpeedEval*sameDirectionEval;
-			fitness += coef2*proxFit;
-  			break;
-
-  		//Ir hacia la luz para recargar bateria	
-  		case 1:
-  			fitness = coef1*maxSpeedEval*sameDirectionEval;
-  			fitness += coef2*lightFit;
-  			fitness += coef3*fmin(1.0,battery[0]/batteryUmb);
-  			break;
-  	}
-  	FINAL DE INTENTO SEGUIMIENTO PAREDES*/
-
-  	/*INTENTO DE ORBITA A DISTANCIAS DISTANCIAS Y SENTIDOS SOBRE LUCES*/
-	//Distancias de giro
-	double blueUmb = 0.5;
-	double redUmb  = 0.5;
-
-	//Parametros fitness
-  	double fitness = 0.0;
-  	double coef1 = 0.25;
-  	double coef2 = 0.75;
 
   	//Acercarse a la luz amarilla
   	double yellowFit = (yellowS0 + yellowS7)/2;
@@ -252,18 +243,15 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
   	double blueFit = 1 - abs(( blueS5 + blueS6 )/2 - blueUmb);
   	double redFit = 1 - abs(( redS1 + redS2 )/2 - redUmb);
 
-
   	//Calculo de fitness segun luz encendida
   	if(maxYellowEval>0.0){
-  		fitness = coef1*maxSpeedEval*sameDirectionEval;
-  		fitness += coef2*yellowFit;
+  		fitness = maxSpeedEval*sameDirectionEval*yellowFit;
   	}else if(maxBlueEval>0.0){
-  		fitness = coef1*maxSpeedEval;
-  		fitness += coef2*blueFit;
+  		fitness = maxSpeedEval*blueFit;
   	}else if(maxRedEval>0.0){
-  		fitness = coef1*maxSpeedEval;
-  		fitness += coef2*redFit;
+  		fitness = maxSpeedEval*redFit;
   	}
+
 	/* TO HERE YOU NEED TO CREATE YOUR FITNESS */	
 
 	m_unNumberOfSteps++;
