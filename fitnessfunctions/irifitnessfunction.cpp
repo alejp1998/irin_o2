@@ -198,43 +198,14 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
   	/*EXP 1*/
   	/*Mismas distancias de orbita y se evalua por coeficientes */
 
-	// //Distancias de giro
-	// double blueUmb = 0.5;
-	// double redUmb  = 0.5;
-
-	// //Parametros fitness
- //  	double fitness = 0.0;
- //  	double coef1 = 0.25;
- //  	double coef2 = 0.75;
-
- //  	//Acercarse a la luz amarilla
- //  	double yellowFit = (yellowS0 + yellowS7)/2;
-
- //  	//Rodear luces azul y roja
- //  	double blueFit = 1 - abs(( blueS5 + blueS6 )/2 - blueUmb);
- //  	double redFit = 1 - abs(( redS1 + redS2 )/2 - redUmb);
-
- //  	//Calculo de fitness segun luz encendida
- //  	if(maxYellowEval>0.0){
- //  		fitness = coef1*maxSpeedEval*sameDirectionEval;
- //  		fitness += coef2*yellowFit;
- //  	}else if(maxBlueEval>0.0){
- //  		fitness = coef1*maxSpeedEval;
- //  		fitness += coef2*blueFit;
- //  	}else if(maxRedEval>0.0){
- //  		fitness = coef1*maxSpeedEval;
- //  		fitness += coef2*redFit;
- //  	}
-	
-  	/*EXP 2*/
-  	/*Distintas distancias de orbita y evaluacion por multiplicacion de todo*/
-
-  	//Distancias de giro
-	double blueUmb = 0.55;
-	double redUmb  = 0.45;
+	//Distancias de giro
+	double blueUmb = 0.5;
+	double redUmb  = 0.5;
 
 	//Parametros fitness
   	double fitness = 0.0;
+  	double coef1 = 0.25;
+  	double coef2 = 0.75;
 
   	//Acercarse a la luz amarilla
   	double yellowFit = (yellowS0 + yellowS7)/2;
@@ -245,12 +216,41 @@ void CIriFitnessFunction::SimulationStep(unsigned int n_simulation_step, double 
 
   	//Calculo de fitness segun luz encendida
   	if(maxYellowEval>0.0){
-  		fitness = maxSpeedEval*sameDirectionEval*yellowFit;
+  		fitness = coef1*maxSpeedEval*sameDirectionEval;
+  		fitness += coef2*yellowFit;
   	}else if(maxBlueEval>0.0){
-  		fitness = maxSpeedEval*blueFit;
+  		fitness = coef1*maxSpeedEval;
+  		fitness += coef2*blueFit;
   	}else if(maxRedEval>0.0){
-  		fitness = maxSpeedEval*redFit;
+  		fitness = coef1*maxSpeedEval;
+  		fitness += coef2*redFit;
   	}
+	
+  	/*EXP 2*/
+  	/*Evaluacion por multiplicacion de todo y uso un sensor*/
+
+ //  	//Distancias de giro
+	// double blueUmb = 0.75;
+	// double redUmb  = 0.75;
+
+	// //Parametros fitness
+ //  	double fitness = 0.0;
+
+ //  	//Acercarse a la luz amarilla
+ //  	double yellowFit = (yellowS0 + yellowS7)/2;
+
+ //  	//Rodear luces azul y roja
+ //  	double blueFit = 1 - abs(blueS5 - blueUmb);
+ //  	double redFit = 1 - abs(redS2 - redUmb);
+
+ //  	//Calculo de fitness segun luz encendida
+ //  	if(maxYellowEval>0.0){
+ //  		fitness = maxSpeedEval*yellowFit;
+ //  	}else if(maxBlueEval>0.0){
+ //  		fitness = maxSpeedEval*blueFit;
+ //  	}else if(maxRedEval>0.0){
+ //  		fitness = maxSpeedEval*redFit;
+ //  	}
 
 	/* TO HERE YOU NEED TO CREATE YOUR FITNESS */	
 

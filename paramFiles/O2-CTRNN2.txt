@@ -3,8 +3,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 NUMBER OF ROBOTS					= 1	
-ROBOT 1: X POSITION (meters)		= 0.0
-ROBOT 1: Y POSITION (meters)		= 0.0
+ROBOT 1: X POSITION (meters)		= -0.7
+ROBOT 1: Y POSITION (meters)		= 0.7
 ROBOT 1: ORIENTATION (radians) 		= 0.0
 WRITE TO FILE (0 No, 1 YES )		= 1
 RUN TIME							= 1000
@@ -68,7 +68,7 @@ GROUND SENSORS USED     (3 sensors: 0 OFF, 1 ON)  = 0 0 0
 
 CHROMOSOME LENGTH 								= 150
 POPULATION SIZE									= 50
-NUMBER OF GENERATIONS							= 3000	
+NUMBER OF GENERATIONS							= 500	
 EVALUATION TIME									= 300
 DO CROSSOVER ( 0 No, 1 Yes )					= 1
 NUMBER OF CROSSOVERS ( Always 1 ) 				= 1
