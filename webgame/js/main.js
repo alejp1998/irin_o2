@@ -174,11 +174,10 @@
     ctx.fillStyle = p.bg;
     ctx.fillRect(0, 0, w, h);
 
-    var chartH = Math.max(80, h * 0.18);
     var aw = w - 40;
-    var ah = h - chartH - 70;
+    var ah = h - 64;
     var ax = 20;
-    var ay = chartH + 16;
+    var ay = 16;
 
     // arena
     ctx.fillStyle = p.floor;
@@ -228,54 +227,12 @@
       ctx.stroke();
     }
 
-    // chart
-    drawChart(w, chartH, p);
-
     ctx.fillStyle = p.muted;
     ctx.font = "600 12px system-ui";
     ctx.textAlign = "left";
-    ctx.fillText(
-      "best fitness per generation · f = V·(1−√Δv)·(1−i)",
-      16,
-      chartH + 6,
-    );
+    ctx.fillText("arena — the best evolved controller so far", 16, 12);
   }
 
-  function drawChart(w, chartH, p) {
-    var m = 36;
-    ctx.fillStyle = p.bg;
-    ctx.fillRect(m, 8, w - m * 2, chartH - 22);
-    ctx.strokeStyle = p.chartGrid;
-    ctx.beginPath();
-    for (var i = 0; i <= 4; i++) {
-      var y = 8 + ((chartH - 22) * i) / 4;
-      ctx.moveTo(m, y);
-      ctx.lineTo(w - m, y);
-    }
-    ctx.stroke();
-    if (history.length < 2) {
-      ctx.fillStyle = p.muted;
-      ctx.font = "600 12px system-ui";
-      ctx.textAlign = "center";
-      ctx.fillText("press ▶ Evolve to start", w / 2, chartH / 2 - 4);
-      return;
-    }
-    var minF = Math.min.apply(null, history);
-    var maxF = Math.max.apply(null, history);
-    var span = maxF - minF || 1;
-    ctx.strokeStyle = p.chart;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (var k = 0; k < history.length; k++) {
-      var x = m + (k / Math.max(1, history.length - 1)) * (w - m * 2);
-      var y = 8 + (chartH - 22) * (1 - (history[k] - minF) / span);
-      if (k === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  }
-
-  // ---------------------------------------------------------------- wiring
   function wire() {
     $id("btn-run").addEventListener("click", function () {
       running = !running;
@@ -353,7 +310,28 @@
   }
 
   // ---------------------------------------------------------------- loop
+  // D3 fitness chart (own component, SVG — not canvas/Pixi)
+  var fitChart = null;
+  var lastChartT = 0;
+  function initChart() {
+    var el = document.getElementById("fit-chart");
+    if (!el || !window.MiniChart) return;
+    fitChart = window.MiniChart(el, {
+      height: 148,
+      title: "best fitness per generation · f = V·(1−√Δv)·(1−i)",
+      emptyText: "press ▶ Evolve to start",
+      pad: 0.02,
+      getData: function () {
+        return history.slice();
+      },
+      color: function () {
+        return pal().chart;
+      },
+    });
+  }
+
   function init() {
+    initChart();
     applyTheme();
     wireGuide();
     wire();
@@ -367,6 +345,10 @@
     function loop() {
       if (running) {
         for (var i = 0; i < speed; i++) oneGeneration();
+      }
+      if (fitChart && Date.now() - lastChartT > 250) {
+        fitChart.update();
+        lastChartT = Date.now();
       }
       render();
       requestAnimationFrame(loop);
