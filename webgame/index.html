@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IRIN O2 — Neuroevolution Lab</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t) document.documentElement.setAttribute("data-theme", t);
+          else
+            document.documentElement.setAttribute(
+              "data-theme",
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light",
+            );
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="style.css?v=1" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 64 64" width="26" height="26">
+            <rect
+              x="2"
+              y="2"
+              width="60"
+              height="60"
+              rx="14"
+              fill="#FFFFFF"
+              stroke="#0F172A"
+              stroke-width="2.5"
+            />
+            <g fill="none" stroke="#0F172A" stroke-width="2">
+              <circle cx="14" cy="32" r="6" />
+              <circle cx="32" cy="14" r="6" />
+              <circle cx="32" cy="50" r="6" />
+              <circle cx="50" cy="32" r="6" />
+              <path
+                d="M19 28 L27 18 M27 46 L19 36 M37 18 L45 28 M45 36 L37 46 M32 20 V44 M14 38 V50 M50 38 V50"
+              />
+            </g>
+          </svg>
+        </div>
+        <div>
+          <h1>
+            IRIN O2 — Neuroevolution Lab <span class="badge">WEB EDITION</span>
+          </h1>
+          <div class="subtitle">
+            NN controller evolved by a GA · Nolfi–Floreano fitness (2019)
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="btn-guide">📖 Guide</button>
+        <button class="btn" id="btn-restart">↻ New run</button>
+        <button class="btn" id="btn-theme" title="Toggle theme">☀️</button>
+      </div>
+    </header>
+
+    <main class="cockpit">
+      <div class="stage-wrap">
+        <div class="stage-panel" id="stage-panel">
+          <canvas id="view"></canvas>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="panel">
+          <h2>🧬 Evolution</h2>
+          <div class="hud">
+            <div class="hud-row">
+              <span>Generation</span><b id="hud-gen">0</b>
+            </div>
+            <div class="hud-row">
+              <span>Best fitness</span><b id="hud-best">—</b>
+            </div>
+            <div class="hud-row">
+              <span>Population</span><b id="hud-pop">30</b>
+            </div>
+            <div class="hud-row">
+              <span>Genome</span><b id="hud-genome">8→4→2</b>
+            </div>
+          </div>
+          <div id="hud-result" class="hud-result hidden"></div>
+        </section>
+
+        <section class="panel">
+          <h2>🕹️ Controls</h2>
+          <button class="btn primary" id="btn-run">▶ Evolve</button>
+          <button class="btn" id="btn-pause">⏸ Pause</button>
+          <label class="slider-row"
+            >Population
+            <input
+              id="pop"
+              type="range"
+              min="10"
+              max="60"
+              step="5"
+              value="30"
+            /><b id="pop-v">30</b></label
+          >
+          <label class="slider-row"
+            >Mutation σ
+            <input
+              id="sigma"
+              type="range"
+              min="0.05"
+              max="0.8"
+              step="0.05"
+              value="0.3"
+            /><b id="sigma-v">0.30</b></label
+          >
+          <label class="slider-row"
+            >Generations/s
+            <input
+              id="speed"
+              type="range"
+              min="1"
+              max="12"
+              step="1"
+              value="4"
+            /><b id="speed-v">4×</b></label
+          >
+        </section>
+
+        <section class="panel log-panel">
+          <h2>📡 Readout</h2>
+          <div class="log" id="log"></div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="hintbar">
+      fitness = V · (1 − √Δv) · (1 − i) — drive fast & straight, avoid the walls
+      — evolve your own e-puck brain
+    </footer>
+
+    <div id="guide" class="modal hidden">
+      <div class="modal-backdrop" data-close-guide></div>
+      <div class="modal-card">
+        <button class="modal-close" data-close-guide title="Close">✕</button>
+        <h2>📖 About this page</h2>
+        <h3>🎓 The Project</h3>
+        <p>
+          <b>IRIN O2 — Trabajo Obligatorio 2</b> (UPM, 2019): an e-puck robot in
+          the Webots simulator whose <b>neural controller</b> (distributed
+          layers, ANN and CTRNN variants) is
+          <b>evolved by a genetic algorithm</b> instead of being
+          hand-programmed. The fitness is the classic
+          <b>Nolfi–Floreano</b> formula from <i>Evolutionary Robotics</i>:
+        </p>
+        <p style="text-align: center">
+          <b>f = V · (1 − √Δv) · (1 − i)</b><br />
+          <span class="muted">V</span> = wheel speed ·
+          <span class="muted">Δv</span> = left/right difference (straight
+          driving) · <span class="muted">i</span> = max proximity sensor (avoid
+          walls)
+        </p>
+        <h3>🧬 The algorithm</h3>
+        <p>
+          Each genome is the flattened weights of an MLP (<b
+            >8 proximity rays → 4 hidden → 2 wheels</b
+          >). Every generation every robot is evaluated in the arena, then the
+          next population is bred with <b>tournament selection</b>, uniform
+          <b>crossover</b>, <b>gaussian mutation</b> and <b>elitism</b>. Watch
+          the fitness curve climb and the robot start driving in clean straight
+          lines away from the walls.
+        </p>
+        <h3>🖥️ Implementation</h3>
+        <p>
+          The C++ Webots framework (layered controllers, experiment, fitness
+          function) is mirrored here by <code>ga_nn.py</code> (9 unit tests) and
+          its JavaScript port <code>ga-core.js</code> (8 tests) — same NN, same
+          fitness, same GA operators. Source:
+          <a
+            href="https://github.com/alejp1998/irin_o2"
+            target="_blank"
+            rel="noopener"
+            >github.com/alejp1998/irin_o2</a
+          >.
+        </p>
+      </div>
+    </div>
+
+    <script src="js/ga-core.js?v=1"></script>
+    <script src="js/main.js?v=1"></script>
+  </body>
+</html>
