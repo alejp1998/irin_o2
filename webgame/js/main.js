@@ -115,11 +115,13 @@
       }
     }
     history.push(bestFit);
+    // annealed sigma: strong exploration early, fine refinement later
+    var sigma = Number($id("sigma").value) * Math.pow(0.996, gen);
     pop = G.evolve(pop, fits, rng, {
-      elitism: 2,
-      k: 3,
+      elitism: 4,
+      k: 4,
       rate: 0.15,
-      sigma: Number($id("sigma").value),
+      sigma: sigma,
     });
     gen++;
     $id("hud-gen").textContent = String(gen);
