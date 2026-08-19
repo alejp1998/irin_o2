@@ -20,7 +20,7 @@
         } catch (e) {}
       })();
     </script>
-    <link rel="stylesheet" href="style.css?v=1" />
+    <link rel="stylesheet" href="style.css?v=2" />
   </head>
   <body>
     <header class="topbar">
@@ -147,51 +147,89 @@
       <div class="modal-card">
         <button class="modal-close" data-close-guide title="Close">✕</button>
         <h2>📖 About this page</h2>
-        <h3>🎓 The Project</h3>
-        <p>
-          <b>IRIN O2 — Trabajo Obligatorio 2</b> (UPM, 2019): an e-puck robot in
-          the Webots simulator whose <b>neural controller</b> (distributed
-          layers, ANN and CTRNN variants) is
-          <b>evolved by a genetic algorithm</b> instead of being
-          hand-programmed. The fitness is the classic
-          <b>Nolfi–Floreano</b> formula from <i>Evolutionary Robotics</i>:
-        </p>
-        <p style="text-align: center">
-          <b>f = V · (1 − √Δv) · (1 − i)</b><br />
-          <span class="muted">V</span> = wheel speed ·
-          <span class="muted">Δv</span> = left/right difference (straight
-          driving) · <span class="muted">i</span> = max proximity sensor (avoid
-          walls)
-        </p>
-        <h3>🧬 The algorithm</h3>
-        <p>
-          Each genome is the flattened weights of an MLP (<b
-            >8 proximity rays → 4 hidden → 2 wheels</b
-          >). Every generation every robot is evaluated in the arena, then the
-          next population is bred with <b>tournament selection</b>, uniform
-          <b>crossover</b>, <b>gaussian mutation</b> and <b>elitism</b>. Watch
-          the fitness curve climb and the robot start driving in clean straight
-          lines away from the walls.
-        </p>
-        <h3>🖥️ Implementation</h3>
-        <p>
-          The C++ Webots framework (layered controllers, experiment, fitness
-          function) is mirrored here by <code>ga_nn.py</code> (9 unit tests) and
-          its JavaScript port <code>ga-core.js</code> (8 tests) — same NN, same
-          fitness, same GA operators. Source:
-          <a
-            href="https://github.com/alejp1998/irin_o2"
-            target="_blank"
-            rel="noopener"
-            >github.com/alejp1998/irin_o2</a
-          >.
-        </p>
+        <div class="guide-tabs">
+          <button class="guide-tab active" data-tab="theory">🧠 Theory</button>
+          <button class="guide-tab" data-tab="game">🎮 Game</button>
+        </div>
+
+        <section class="guide-panel" data-tab="theory">
+          <h3>🎓 The Project</h3>
+          <p>
+            <b>IRIN O2</b> (UPM, 2019) — a Webots e-puck whose neural controller
+            is <b>evolved by a genetic algorithm</b> instead of learned by
+            gradient descent. The lab evolves layered distributed NN
+            controllers; this page reproduces the pipeline in miniature: an
+            8-4-2 MLP (proximity rays → hidden → wheel speeds) in a 2D arena,
+            evolved live with the same fitness function.
+          </p>
+
+          <h3>🧬 Genetic algorithm</h3>
+          <p>
+            Each genome is the weight vector of the controller. The population
+            of \(P\) individuals is evaluated, then a new generation is built by
+          </p>
+          <ul>
+            <li>
+              <b>Tournament selection</b> — pick \(k\) genomes at random, keep
+              the fittest, repeat to fill the mating pool;
+            </li>
+            <li><b>Crossover</b> — recombine two parents' weight vectors;</li>
+            <li>
+              <b>Gaussian mutation</b> — perturb weights with \(\mathcal{N}(0,
+              \sigma^2)\); \(\sigma\) <b>anneals</b> each generation
+              (0.996<sup>gen</sup>) to refine late in the run;
+            </li>
+            <li><b>Elitism</b> — the best individuals survive unchanged.</li>
+          </ul>
+
+          <h3>🎯 Fitness (Nolfi &amp; Floreano)</h3>
+          <p>
+            Each genome drives the robot for 120 steps; the per-step fitness
+            rewards fast, straight, obstacle-avoiding motion:
+          </p>
+          <p class="math">\[ f = V\,(1 - \sqrt{\Delta v})\,(1 - i) \]</p>
+          <p>
+            where \(V\) is the translational speed, \(\Delta v\) the rotational
+            difference between wheels (penalizing turns) and \(i \in [0,1]\) the
+            strongest proximity reading (penalizing walls). The chart plots the
+            best fitness per generation; with the default settings the
+            population reaches the task ceiling (\(f \approx 0.53\)) within ~100
+            generations.
+          </p>
+        </section>
+
+        <section class="guide-panel hidden" data-tab="game">
+          <h3>🧪 How to use</h3>
+          <p>
+            Press <b>▶ Evolve</b> — the button becomes <b>⏸ Pause</b> while the
+            GA runs. The arena shows the <b>best individual so far</b> driving
+            with its proximity rays; the fitness curve climbs as the population
+            improves. Adjust population size, mutation \(\sigma\) and speed;
+            <b>↻ Reset</b> starts a fresh run with a new random seed.
+          </p>
+          <h3>🖥️ Source</h3>
+          <p>
+            <a
+              href="https://github.com/alejp1998/irin_o2"
+              target="_blank"
+              rel="noopener"
+              >github.com/alejp1998/irin_o2</a
+            >
+            — C++ controllers, Python model, tests.
+          </p>
+        </section>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-    <script src="js/minichart.js?v=1"></script>
-    <script src="js/ga-core.js?v=1"></script>
-    <script src="js/main.js?v=1"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+      id="MathJax-script"
+      async
+    ></script>
+    <script src="js/guide.js?v=2"></script>
+    <script src="js/minichart.js?v=2"></script>
+    <script src="js/ga-core.js?v=2"></script>
+    <script src="js/main.js?v=2"></script>
   </body>
 </html>
