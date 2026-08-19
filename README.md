@@ -42,6 +42,9 @@ pytest -q      # 9 tests: sensors, dynamics, fitness ordering, GA improvement
 The JavaScript port (`webgame/js/ga-core.js`, 8 tests) drives the interactive
 page with identical math.
 
+### 🖼️ Screenshots
+
+![Neuroevolution in the browser](docs/webgame_ga.png)
 ## 🎮 Interactive web edition
 
 `webgame/` — watch evolution happen live:
