@@ -243,10 +243,6 @@
       this.textContent = running ? "⏸ Pause" : "▶ Evolve";
       if (running && history.length === 0) log("▶ Evolution started.");
     });
-    $id("btn-pause").addEventListener("click", function () {
-      running = false;
-      $id("btn-run").textContent = "▶ Evolve";
-    });
     $id("btn-restart").addEventListener("click", function () {
       running = false;
       $id("btn-run").textContent = "▶ Evolve";
